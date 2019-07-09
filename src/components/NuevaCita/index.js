@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
 import uuid from 'uuid';
 
+const stateInitial = {
+    cita : {
+        mascota: '',
+        propietario: '',
+        fecha: '',
+        hora: '',
+        sintomas: '',
+    },
+    error: false
+}
+
 class NuevaCita extends Component {
-    state = {
-        cita : {
-            mascota: '',
-            propietario: '',
-            fecha: '',
-            hora: '',
-            sintomas: '',
-        },
-        error: false
-    }
+    state = { ...stateInitial };
 
     handleChange = e => {
         console.log('e', e.target.value);
@@ -36,16 +38,32 @@ class NuevaCita extends Component {
             return;
         }
 
-        this.props.crearNuevaCita(this.state.cita)
+        const nuevaCita = {...this.state.cita}
+        nuevaCita.id = uuid();
+
+        this.props.crearNuevaCita(nuevaCita);
+
+        this.setState( stateInitial );
+
     }
 
     render() {
+
+        const { error } = this.state;
+
         return (
             <div className="card mt-5 py-5">
                 <div className="card-body">
                     <h2 className="card-title text-center mb-5">
                         Llena el formulario para crear un cita
                     </h2>
+
+                    { 
+                        error &&
+                        <div className="alert alert-danger mt-2 mb-5 text-center">
+                            Todos los campos son obligatorios
+                        </div>
+                    }
 
                     <form onSubmit={this.handleSubmit}>
                         <div className="form-group row">
